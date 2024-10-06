@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Form Filler</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for micro animations and mobile optimization -->
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f9fc;
+      }
+      h1 {
+        margin-top: 30px;
+        color: #333;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+      .container {
+        max-width: 600px;
+      }
+      .btn-primary, .btn-secondary {
+        transition: transform 0.2s ease, background-color 0.2s ease;
+      }
+      .btn-primary:hover, .btn-secondary:hover {
+        transform: translateY(-2px);
+      }
+      textarea {
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+      button {
+        padding: 10px 15px;
+        border-radius: 8px;
+      }
+      /* Mobile optimization */
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.25rem;
+        }
+        textarea {
+          font-size: 0.9rem;
+        }
+        button {
+          font-size: 0.9rem;
+          padding: 8px 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Form Data Filler</h1>
+      <div class="row justify-content-center">
+        <div class="col-md-12">
+          <form method="POST">
+            <div class="form-group">
+              <label for="data">Paste the Form Data:</label>
+              <textarea id="data" name="data" class="form-control" rows="10" placeholder="Form data will be auto-pasted here"></textarea>
+            </div>
+            <button type="button" class="btn btn-secondary btn-block mb-2" onclick="pasteFromClipboard()">Use Most Recent Copied Text</button>
+            <button type="submit" class="btn btn-primary btn-block">Generate</button>
+          </form>
+
+          {% if full_report %}
+            <h2 class="mt-5">Generated Full Report</h2>
+            <pre id="fullReport">{{ full_report }}</pre>
+            <button class="btn btn-secondary btn-block mt-3" onclick="copyToClipboard()">Copy to Clipboard</button>
+            <button class="btn btn-success btn-block mt-3" onclick="shareToWhatsApp()">Share to WhatsApp</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript for auto-pasting, clipboard functionality, and basic animations -->
+    <script>
+      // Function to automatically paste the most recently copied text
+      function pasteFromClipboard() {
+        navigator.clipboard.readText().then(text => {
+          document.getElementById("data").value = text;
+        }).catch(err => {
+          console.error('Failed to read clipboard: ', err);
+        });
+      }
+
+      // Function to copy the generated report to clipboard
+      function copyToClipboard() {
+        var reportText = document.getElementById("fullReport").innerText;
+        navigator.clipboard.writeText(reportText).then(function() {
+          alert("Report copied to clipboard!");
+        }, function() {
+          alert("Failed to copy text.");
+        });
+      }
+
+      // Function to share the report via WhatsApp
+      function shareToWhatsApp() {
+        var reportText = document.getElementById("fullReport").innerText;
+        var encodedText = encodeURIComponent(reportText);
+        var whatsappUrl = "https://wa.me/?text=" + encodedText;
+        window.open(whatsappUrl, '_blank');
+      }
+
+      // Auto-paste when the page loads (for convenience)
+      window.onload = function() {
+        pasteFromClipboard();
+      };
+    </script>
+
+    <!-- Optional JavaScript for Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </body>
+</html>
